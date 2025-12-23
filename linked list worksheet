@@ -1,0 +1,113 @@
+#include <iostream>
+using namespace std;
+
+
+class Node {
+public:
+    float temperature;  
+    Node* next;         
+
+  
+    Node(float temp) {
+        temperature = temp;
+        next = nullptr;
+    }
+};
+
+
+class TemperatureList {
+private:
+    Node* head;
+    int count;
+    int maxSize;   
+
+public:
+   
+    TemperatureList(int size) {
+        head = nullptr;
+        count = 0;
+        maxSize = size;
+    }
+
+ 
+    void insertReading(float temp) {
+        if (count == maxSize) {
+            deleteOldest();  
+        }
+
+        Node* newNode = new Node(temp);
+        newNode->next = head;
+        head = newNode;
+        count++;
+
+        cout << "Inserted Temperature: " << temp << " °C\n";
+    }
+
+
+    void searchReading(float temp) {
+        Node* tempNode = head;
+        int position = 1;
+
+        while (tempNode != nullptr) {
+            if (tempNode->temperature == temp) {
+                cout << "Temperature " << temp << " °C found at position " << position << endl;
+                return;
+            }
+            tempNode = tempNode->next;
+            position++;
+        }
+        cout << "Temperature " << temp << " °C not found\n";
+    }
+
+
+    void deleteOldest() {
+        if (head == nullptr)
+            return;
+
+        if (head->next == nullptr) {
+            delete head;
+            head = nullptr;
+        } else {
+            Node* tempNode = head;
+            while (tempNode->next->next != nullptr) {
+                tempNode = tempNode->next;
+            }
+            delete tempNode->next;
+            tempNode->next = nullptr;
+        }
+        count--;
+        cout << "Oldest temperature deleted (Memory Full)\n";
+    }
+
+    void displayReadings() {
+        if (head == nullptr) {
+            cout << "No temperature data available\n";
+            return;
+        }
+
+        Node* tempNode = head;
+        cout << "\nTemperature Readings:\n";
+        while (tempNode != nullptr) {
+            cout << tempNode->temperature << " °C\n";
+            tempNode = tempNode->next;
+        }
+    }
+};
+
+
+int main() {
+    TemperatureList sensor(5);  
+
+    sensor.insertReading(30.5);
+    sensor.insertReading(31.2);
+    sensor.insertReading(29.8);
+    sensor.insertReading(32.1);
+    sensor.insertReading(28.9);
+    sensor.insertReading(33.0);  
+    sensor.displayReadings();
+
+    sensor.searchReading(31.2);
+    sensor.searchReading(35.0);
+
+    return 0;
+}
